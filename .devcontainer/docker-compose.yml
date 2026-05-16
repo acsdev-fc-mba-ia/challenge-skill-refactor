@@ -1,0 +1,9 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: challenge-skill-refactor:latest 
+    command: sleep infinity
+    volumes:
+      - ..:/workspace:cached

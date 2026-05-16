@@ -1,0 +1,26 @@
+{
+  "name": "challenge-skill-refactor",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "updateRemoteUserUID": false,
+  "forwardPorts": [3000, 5000],
+  "mounts": [
+    "type=bind,source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,readonly",
+    "type=bind,source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,readonly",
+    "type=bind,source=${localEnv:HOME}/.claude,target=/home/vscode/.claude",
+    "type=bind,source=${localEnv:HOME}/.claude.json,target=/home/vscode/.claude.json"
+  ],
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Anthropic.claude-vscode",
+        "ms-python.python",
+        "ms-python.pylint",
+        "dbaeumer.vscode-eslint",
+        "humao.rest-client"
+      ]
+    }
+  }
+}
