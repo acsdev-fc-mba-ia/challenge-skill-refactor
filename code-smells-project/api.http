@@ -1,0 +1,208 @@
+@baseUrl = http://127.0.0.1:5000
+
+# ============================================================
+# HEALTH & INDEX
+# ============================================================
+
+### Index
+GET {{baseUrl}}/
+
+### Health check 
+GET {{baseUrl}}/health
+
+# ============================================================
+# PRODUTOS
+# ============================================================
+
+### Listar todos os produtos
+GET {{baseUrl}}/produtos
+
+### Buscar produto por ID
+GET {{baseUrl}}/produtos/1
+
+### Buscar produto inexistente (404)
+GET {{baseUrl}}/produtos/9999
+
+### Criar produto
+POST {{baseUrl}}/produtos
+Content-Type: application/json
+
+{
+  "nome": "Notebook Dell",
+  "descricao": "Notebook i7 16GB RAM",
+  "preco": 4500.00,
+  "estoque": 10,
+  "categoria": "informatica"
+}
+
+### Criar produto - categoria inválida (400)
+POST {{baseUrl}}/produtos
+Content-Type: application/json
+
+{
+  "nome": "Produto Teste",
+  "descricao": "Sem categoria válida",
+  "preco": 100.00,
+  "estoque": 5,
+  "categoria": "categoria_inexistente"
+}
+
+### Atualizar produto
+PUT {{baseUrl}}/produtos/1
+Content-Type: application/json
+
+{
+  "nome": "Notebook Dell Atualizado",
+  "descricao": "Notebook i7 32GB RAM",
+  "preco": 4800.00,
+  "estoque": 8,
+  "categoria": "informatica"
+}
+
+### Deletar produto
+DELETE {{baseUrl}}/produtos/3
+
+### Buscar produtos por termo
+GET {{baseUrl}}/produtos/busca?q=notebook
+
+### Buscar produtos com filtros de categoria e preço
+GET {{baseUrl}}/produtos/busca?q=&categoria=informatica&preco_min=100&preco_max=5000
+
+### SQL Injection via busca
+GET {{baseUrl}}/produtos/busca?q=' OR '1'='1
+
+# ============================================================
+# USUÁRIOS
+# ============================================================
+
+### Listar todos os usuários 
+GET {{baseUrl}}/usuarios
+
+### Buscar usuário por ID
+GET {{baseUrl}}/usuarios/1
+
+### Criar usuário
+POST {{baseUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nome": "Maria Silva",
+  "email": "maria@exemplo.com",
+  "senha": "senha123"
+}
+
+### Criar usuário 
+POST {{baseUrl}}/usuarios
+Content-Type: application/json
+
+{
+  "nome": "Incompleto"
+}
+
+# ============================================================
+# LOGIN
+# ============================================================
+
+### Login com credenciais válidas
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "admin@loja.com",
+  "senha": "admin123"
+}
+
+### Login com credenciais inválidas (401)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "naoexiste@email.com",
+  "senha": "errada"
+}
+
+### SQL Injection no login 
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "' OR '1'='1' --",
+  "senha": "qualquer"
+}
+
+# ============================================================
+# PEDIDOS
+# ============================================================
+
+### Listar todos os pedidos
+GET {{baseUrl}}/pedidos
+
+### Listar pedidos de um usuário
+GET {{baseUrl}}/pedidos/usuario/1
+
+### Criar pedido
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "usuario_id": 1,
+  "itens": [
+    { "produto_id": 1, "quantidade": 2 },
+    { "produto_id": 2, "quantidade": 1 }
+  ]
+}
+
+### Criar pedido — sem itens (400)
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "usuario_id": 1,
+  "itens": []
+}
+
+### Atualizar status do pedido
+PUT {{baseUrl}}/pedidos/1/status
+Content-Type: application/json
+
+{
+  "status": "aprovado"
+}
+
+### Atualizar status — valor inválido (400)
+PUT {{baseUrl}}/pedidos/1/status
+Content-Type: application/json
+
+{
+  "status": "voando"
+}
+
+# ============================================================
+# RELATÓRIOS
+# ============================================================
+
+### Relatório de vendas
+GET {{baseUrl}}/relatorios/vendas
+
+# ============================================================
+# ADMIN — ENDPOINTS CRÍTICOS (sem autenticação — achados CRITICAL)
+# ============================================================
+
+### Executar query arbitrária
+POST {{baseUrl}}/admin/query
+Content-Type: application/json
+
+{
+  "sql": "SELECT * FROM usuarios"
+}
+
+### Executar query arbitrária
+POST {{baseUrl}}/admin/query
+Content-Type: application/json
+
+{
+  "sql": "UPDATE usuarios SET tipo = 'admin' WHERE id = 2"
+}
+
+### Reset completo do banco sem autenticação
+POST {{baseUrl}}/admin/reset-db

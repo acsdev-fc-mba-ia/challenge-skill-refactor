@@ -1,0 +1,273 @@
+@baseUrl = http://127.0.0.1:5000
+
+# ============================================================
+# HEALTH & INDEX
+# ============================================================
+
+### Index
+GET {{baseUrl}}/
+
+### Health check
+GET {{baseUrl}}/health
+
+# ============================================================
+# AUTENTICAÇÃO
+# ============================================================
+
+### Login com credenciais válidas 
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "joao@email.com",
+  "password": "1234"
+}
+
+### Login com credenciais inválidas (401)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "naoexiste@email.com",
+  "password": "errada"
+}
+
+### Login com usuário inativo (403)
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "inativo@taskmanager.com",
+  "password": "senha123"
+}
+
+# ============================================================
+# USUÁRIOS
+# ============================================================
+
+### Listar todos os usuários
+GET {{baseUrl}}/users
+
+### Buscar usuário por ID
+GET {{baseUrl}}/users/1
+
+### Buscar usuário inexistente (404)
+GET {{baseUrl}}/users/9999
+
+### Criar usuário
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao@empresa.com",
+  "password": "senha123",
+  "role": "user"
+}
+
+### Criar usuário — role inválido (400)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Teste",
+  "email": "teste@empresa.com",
+  "password": "1234",
+  "role": "superadmin"
+}
+
+### Criar usuário — email duplicado (409)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Duplicado",
+  "email": "admin@taskmanager.com",
+  "password": "senha123",
+  "role": "user"
+}
+
+### Atualizar usuário
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "name": "Admin Atualizado",
+  "role": "manager"
+}
+
+### Desativar usuário
+PUT {{baseUrl}}/users/2
+Content-Type: application/json
+
+{
+  "active": false
+}
+
+### Listar tasks de um usuário
+GET {{baseUrl}}/users/1/tasks
+
+### Deletar usuário
+DELETE {{baseUrl}}/users/3
+
+# ============================================================
+# TASKS
+# ============================================================
+
+### Listar todas as tasks 
+GET {{baseUrl}}/tasks
+
+### Buscar task por ID
+GET {{baseUrl}}/tasks/1
+
+### Buscar task inexistente (404)
+GET {{baseUrl}}/tasks/9999
+
+### Criar task com todos os campos
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Implementar autenticação JWT",
+  "description": "Substituir o token fake por JWT real",
+  "status": "pending",
+  "priority": 1,
+  "user_id": 1,
+  "category_id": 1,
+  "due_date": "2026-06-01",
+  "tags": ["backend", "segurança"]
+}
+
+### Criar task mínima (apenas título obrigatório)
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Task simples"
+}
+
+### Criar task — título muito curto (400)
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Ab"
+}
+
+### Criar task — status inválido (400)
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Task com status errado",
+  "status": "fazendo"
+}
+
+### Criar task — prioridade fora do range (400)
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Prioridade inválida",
+  "priority": 10
+}
+
+### Criar task com data já vencida
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+
+{
+  "title": "Task atrasada desde o começo",
+  "due_date": "2020-01-01",
+  "status": "pending",
+  "priority": 1
+}
+
+### Atualizar task
+PUT {{baseUrl}}/tasks/1
+Content-Type: application/json
+
+{
+  "status": "in_progress",
+  "priority": 2
+}
+
+### Concluir task
+PUT {{baseUrl}}/tasks/1
+Content-Type: application/json
+
+{
+  "status": "done"
+}
+
+### Deletar task
+DELETE {{baseUrl}}/tasks/5
+
+# ============================================================
+# BUSCA E ESTATÍSTICAS DE TASKS
+# ============================================================
+
+### Busca por termo livre
+GET {{baseUrl}}/tasks/search?q=autenticação
+
+### Busca por status
+GET {{baseUrl}}/tasks/search?status=pending
+
+### Busca por prioridade
+GET {{baseUrl}}/tasks/search?priority=1
+
+### Busca combinada
+GET {{baseUrl}}/tasks/search?status=pending&priority=1&user_id=1
+
+### Estatísticas gerais das tasks
+GET {{baseUrl}}/tasks/stats
+
+# ============================================================
+# CATEGORIAS
+# ============================================================
+
+### Listar categorias
+GET {{baseUrl}}/categories
+
+### Criar categoria
+POST {{baseUrl}}/categories
+Content-Type: application/json
+
+{
+  "name": "Infraestrutura",
+  "description": "Tasks relacionadas a infra e DevOps",
+  "color": "#FF5733"
+}
+
+### Criar categoria — sem nome (400)
+POST {{baseUrl}}/categories
+Content-Type: application/json
+
+{
+  "description": "Sem nome"
+}
+
+### Atualizar categoria
+PUT {{baseUrl}}/categories/1
+Content-Type: application/json
+
+{
+  "name": "Backend",
+  "color": "#3498DB"
+}
+
+### Deletar categoria
+DELETE {{baseUrl}}/categories/4
+
+# ============================================================
+# RELATÓRIOS
+# ============================================================
+
+### Relatório geral (summary) — também duplica lógica overdue — achado HIGH
+GET {{baseUrl}}/reports/summary
+
+### Relatório por usuário
+GET {{baseUrl}}/reports/user/1
+
+### Relatório de usuário inexistente (404)
+GET {{baseUrl}}/reports/user/9999
