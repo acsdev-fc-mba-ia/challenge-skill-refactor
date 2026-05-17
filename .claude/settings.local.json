@@ -9,7 +9,8 @@
       "Bash(rm -f loja.db)",
       "Bash(venv/bin/python app.py)",
       "Bash(curl -sf http://127.0.0.1:5000/)",
-      "Bash(pkill -f \"venv/bin/python app.py\")"
+      "Bash(pkill -f \"venv/bin/python app.py\")",
+      "Bash(netstat -tlnp)"
     ]
   }
 }
