@@ -1,15 +1,29 @@
 import sqlite3
-import os
+import logging
+import bcrypt
+from flask import g
+from config.settings import DATABASE_URL
 
-db_connection = None
-db_path = "loja.db"
+logger = logging.getLogger(__name__)
+
 
 def get_db():
-    global db_connection
-    if db_connection is None:
-        db_connection = sqlite3.connect(db_path, check_same_thread=False)
-        db_connection.row_factory = sqlite3.Row
-        cursor = db_connection.cursor()
+    if 'db' not in g:
+        g.db = sqlite3.connect(DATABASE_URL, check_same_thread=False)
+        g.db.row_factory = sqlite3.Row
+    return g.db
+
+
+def close_db(error=None):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+
+def init_db(app):
+    with app.app_context():
+        db = get_db()
+        cursor = db.cursor()
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS produtos (
@@ -27,7 +41,7 @@ def get_db():
             CREATE TABLE IF NOT EXISTS usuarios (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT,
-                email TEXT,
+                email TEXT UNIQUE,
                 senha TEXT,
                 tipo TEXT DEFAULT 'cliente',
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -51,7 +65,7 @@ def get_db():
                 preco_unitario REAL
             )
         """)
-        db_connection.commit()
+        db.commit()
 
         cursor.execute("SELECT COUNT(*) FROM produtos")
         if cursor.fetchone()[0] == 0:
@@ -73,14 +87,18 @@ def get_db():
             )
 
             usuarios = [
-                ("Admin", "admin@loja.com", "admin123", "admin"),
-                ("João Silva", "joao@email.com", "123456", "cliente"),
-                ("Maria Santos", "maria@email.com", "senha123", "cliente"),
+                ("Admin", "admin@loja.com",
+                 bcrypt.hashpw(b"admin123", bcrypt.gensalt()).decode(), "admin"),
+                ("João Silva", "joao@email.com",
+                 bcrypt.hashpw(b"123456", bcrypt.gensalt()).decode(), "cliente"),
+                ("Maria Santos", "maria@email.com",
+                 bcrypt.hashpw(b"senha123", bcrypt.gensalt()).decode(), "cliente"),
             ]
             cursor.executemany(
                 "INSERT INTO usuarios (nome, email, senha, tipo) VALUES (?, ?, ?, ?)",
                 usuarios
             )
-            db_connection.commit()
+            db.commit()
+            logger.info("Database initialized with seed data")
 
-    return db_connection
+    app.teardown_appcontext(close_db)
