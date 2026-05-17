@@ -106,7 +106,21 @@ Análise manual dos três projetos legados, identificando problemas de arquitetu
 
 ## B) Construção da Skill
 
-> _Seção a ser preenchida após a criação da skill (`/refactor-arch`)._
+### Desing
+
+`SKILL.md` define três fases sequenciais com permissões explícitas (Fase 1 e 2: somente leitura; Fase 3: modificações; parada obrigatória entre Fase 2 e 3 para confirmação). O conhecimento foi separado em duas camadas: core agnóstico e stack adapters.
+
+### Anti-patterns do catálogo
+
+16 anti-patterns em 4 severidades (CRITICAL, HIGH, MEDIUM, LOW), todos derivados da análise manual dos projetos.
+
+### Por que é agnóstico à tecnologia
+
+A `SKILL.md` e os cinco arquivos core não contêm código nem nomes de linguagem. O específico de cada stack vive isoladamente nos adapters, carregados condicionalmente após a detecção da Fase 1. Adicionar suporte a uma nova linguagem (Java, Go, etc.) exige criar um único arquivo em `stack-adapters/`, sem editar o core.
+
+### Desafio
+
+**Equilíbrio entre concretude e generalidade** — resolvido com a estrutura em três blocos do catálogo: os Sinais Semânticos são específicos o bastante para serem acionáveis em qualquer linguagem, enquanto o adapter _match_ exato quando disponível.
 
 ---
 
