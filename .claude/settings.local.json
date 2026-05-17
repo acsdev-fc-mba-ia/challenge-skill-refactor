@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout 5 venv/bin/python *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(timeout 15 venv/bin/python -c ' *)",
+      "Bash(git commit *)",
+      "Bash(rm -f loja.db)",
+      "Bash(venv/bin/python app.py)",
+      "Bash(curl -sf http://127.0.0.1:5000/)",
+      "Bash(pkill -f \"venv/bin/python app.py\")"
+    ]
+  }
+}
