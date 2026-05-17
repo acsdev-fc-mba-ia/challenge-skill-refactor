@@ -120,14 +120,32 @@ Análise manual dos três projetos legados, identificando problemas de arquitetu
 
 A `SKILL.md` e os cinco arquivos core não contêm código nem nomes de linguagem. O específico de cada stack vive isoladamente nos adapters, carregados condicionalmente após a detecção da Fase 1. Adicionar suporte a uma nova linguagem (Java, Go, etc.) exige criar um único arquivo em `stack-adapters/`, sem editar o core.
 
-### Desafio
-
-**Equilíbrio entre concretude e generalidade** — resolvido com a estrutura em três blocos do catálogo: os Sinais Semânticos são específicos o bastante para serem acionáveis em qualquer linguagem, enquanto o adapter _match_ exato quando disponível.
-
 ---
 
 ## C) Resultados
 
-> _Seção a ser preenchida após a execução da skill nos 3 projetos._
+Na pasta `z_results` estão disponibilizados 6 reports:
+
+- audit-project-[project_name].md corresponde ao arquivo de analise que é produzido ao final da fase 2 contendo os problemas encontrados e recomendações de fatoração.
+
+- refactor-project-[project_name].md corresponde ao resultado das modificações após execução da fase 3 (refatoração) mais o relatório de validação executado pela SKILL.
+
+---
+
+## D) Como Executar
+
+- Abra o projeto no vscode;
+
+- Faça o build do dev container ( apòs o build todas as dependencias assim como o claude code devem estar disponíveis no ambiente );
+
+- Verifique se o claude code esta disponível, se não estiver, execute `curl -fsSL https://claude.ai/install.sh | bash`
+
+- Configure seu modo de acesso ao claude code. ( se o seu claude code está configurado na pasta padrão do usuário da máquina host, o dev container deve utilisar essas configurações)
+
+- Inicie o claude code dentro da projeto desejado
+
+- Execute à skill `/refactor-arch`
+
+**Observação: Não hà nada à executar, a skill já foi executada e os resultado do trabalho da skill foi commitado**
 
 ---
