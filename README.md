@@ -2,7 +2,11 @@
 
 Rode o projeto com Dev Containers.
 
+**IMPORTANTE**
+
 _Como o projeto foi modificado para usar devcontainers, modifiquei *localhost* por *127.0.0.1*_
+
+_A pasta reports foi renomeada para z_reports para fins de ordenação no vscode_
 
 ## Como rodar os projetos
 
