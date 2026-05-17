@@ -8,6 +8,8 @@ _Como o projeto foi modificado para usar devcontainers, modifiquei *localhost* p
 
 _A pasta reports foi renomeada para z_reports para fins de ordenação no vscode_
 
+_A pasta .claude foi colocada na raiz do projeto e foram criados links simbolicos dentro de cada projeto_
+
 ## Como rodar os projetos
 
 ### code-smells-project
